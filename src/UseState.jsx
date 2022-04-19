@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const UseState = ({ name }) => {
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("Empezando el efecto");
+    
+    //Cuando hagas una consulta al backend o a una API, es bueno utilizar esta validacion por el render de react
+    if(loading) {
+      setTimeout(() => {
+        console.log("Haciendo la validacion");
+        setLoading(false)
+        console.log("Terminando la validacion");
+      })
+    }
+
+    console.log("Terminando el efecto");
+  },[loading])
 
   return (
     <div>
@@ -13,10 +29,13 @@ const UseState = ({ name }) => {
         <p>Error: El codigo es incorrecto</p>
       )}
 
+      {loading && (
+        <p>Cargando...</p>
+      )}
+
       <input type="text" placeholder="Codigo de seguridad" />
       <button
-        {/*onClick={() => setError(prevState => !prevState)}*/}
-        onClick={() => setError(!error)}
+        onClick={() => setLoading(true)}
       >Comprobar</button>
     </div>
   );
