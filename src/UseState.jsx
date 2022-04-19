@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 
+const KEYWORD = 'dorime';
+
 const UseState = ({ name }) => {
+  const [value, setValue] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("Empezando el efecto");
-    
     //Cuando hagas una consulta al backend o a una API, es bueno utilizar esta validacion por el render de react
     if(loading) {
       setTimeout(() => {
-        console.log("Haciendo la validacion");
-        setLoading(false)
-        console.log("Terminando la validacion");
+        if(value === KEYWORD){
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setError(true);
+        }
       }, 3000)
     }
 
-    console.log("Terminando el efecto");
   },[loading])
+
 
   return (
     <div>
@@ -25,7 +29,7 @@ const UseState = ({ name }) => {
       
       <p>Por favor, escribe el código de seguridad</p>
 
-      {error && (
+      {(error && !loading) && (
         <p>Error: El codigo es incorrecto</p>
       )}
 
@@ -33,9 +37,19 @@ const UseState = ({ name }) => {
         <p>Cargando...</p>
       )}
 
-      <input type="text" placeholder="Codigo de seguridad" />
+      <input
+        type="text"
+        placeholder="Codigo de seguridad"
+        value={value}
+        onChange={(event) => {
+          setValue(event.target.value)
+        }}
+      />
       <button
-        onClick={() => setLoading(true)}
+        onClick={() => {
+          setLoading(true);
+          //setError(false);
+        }}
       >Comprobar</button>
     </div>
   );
