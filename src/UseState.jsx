@@ -13,7 +13,7 @@ const UseState = ({ name }) => {
         console.log("Haciendo la validacion");
         setLoading(false)
         console.log("Terminando la validacion");
-      })
+      }, 3000)
     }
 
     console.log("Terminando el efecto");
