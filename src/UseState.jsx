@@ -11,27 +11,64 @@ const UseState = ({ name }) => {
     confirmed: false,
   })
 
+  const onConfirm = () => {
+      setState({
+        ...state,
+        loading: false,
+        error: false,
+        confirmed: true,
+      });
+  };
+
+  const onError = () => {
+    setState({
+      ...state,
+      error: true,
+      loading: false,
+    })
+  };
+
+  const onWrite = (newValue) => {
+    setState({
+      ...state,
+      value: newValue,
+    })
+  };
+
+  const onCheck = () => {
+    setState({
+      ...state,
+      loading: true
+    })
+  };
+
+  const onDelete = () => {
+      setState({
+        ...state,
+        deleted: true,
+      })
+  };
+
+  const onReset = () => {
+    setState({
+      ...state,
+      deleted: false,
+      confirmed: false,
+      value: '',
+    })
+  };
+
   useEffect(() => {
     //Cuando hagas una consulta al backend o a una API, es bueno utilizar esta validacion por el render de react
     if(state.loading) {
       setTimeout(() => {
         if(state.value === KEYWORD){
-          setState({
-            ...state,
-            loading: false,
-            error: false,
-            confirmed: true,
-          });
+          onConfirm();
         } else {
-          setState({
-            ...state,
-            loading: false,
-            error: true,
-          });
+          onError();
         }
       }, 3000)
     }
-
   },[state.loading])
 
   if (!state.deleted && !state.confirmed) {
@@ -52,19 +89,9 @@ const UseState = ({ name }) => {
           type="text"
           placeholder="Codigo de seguridad"
           value={state.value}
-          onChange={(event) => {
-            setState({
-              ...state,
-              value: event.target.value
-            })
-          }}
+          onChange={(event) => onWrite(event.target.value)}
         />
-        <button
-          onClick={() => setState({
-            ...state,
-            loading: true
-          })}
-        >
+        <button onClick={() => onCheck()}>
           Comprobar
         </button>
       </div>
@@ -76,25 +103,12 @@ const UseState = ({ name }) => {
       <Fragment>
         <p>Estado de confirmacion: ¿Deseas eliminar?</p>
         <button
-          onClick={ () => {
-              setState({
-                ...state,
-                deleted: true,
-              })
-            }
-          }
+          onClick={ () => onDelete()}
         >
           Sure!
         </button>
         <button
-          onClick={ () => {
-              setState({
-                ...state,
-                confirmed: false,
-                value: '',
-              })
-            }
-          }
+          onClick={() => onReset()}
         >
           Nope, no me elimines
         </button>
@@ -106,14 +120,7 @@ const UseState = ({ name }) => {
     <Fragment>
       <p>Jugador numero X, usted ha sido eliminado</p>
       <button
-        onClick={() => {
-          setState({
-            ...state,
-            deleted: false,
-            confirmed: false,
-            value: '',
-          })
-        }}
+        onClick={() => onReset()}
       >
         Volver al pasado...
       </button>
