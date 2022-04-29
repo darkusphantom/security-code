@@ -5,13 +5,27 @@ const KEYWORD = 'dorime';
 const UseReducer = ({ name }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  const onConfirm = () => dispatch({ type: actionTypes.confirm});
+  const onError = () => dispatch({ type: actionTypes.error });
+
+  const onWrite = ({ target: { value } }) => {
+    dispatch({
+      type: actionTypes.write,
+      payload: value
+    })
+  };
+
+  const onCheck = () => dispatch({ type: actionTypes.check });
+  const onDelete = () => dispatch({ type: actionTypes.delete });
+  const onReset = () => dispatch({ type: actionTypes.reset });
+
   useEffect(() => {
     if(state.loading) {
       setTimeout(() => {
         if(state.value === KEYWORD){
-          dispatch({ type: 'CONFIRM' });
+          onConfirm();
         } else {
-          dispatch({ type: 'ERROR' });
+          onError();
         }
       }, 3000)
     }
@@ -35,12 +49,9 @@ const UseReducer = ({ name }) => {
           type="text"
           placeholder="Codigo de seguridad"
           value={state.value}
-          onChange={(event) => dispatch({
-            type: 'WRITE',
-            payload: event.target.value
-          })}
+          onChange={onWrite}
         />
-        <button onClick={() => dispatch({ type: 'CHECK' })}>
+        <button onClick={onCheck}>
           Comprobar
         </button>
       </div>
@@ -51,14 +62,10 @@ const UseReducer = ({ name }) => {
     return (
       <Fragment>
         <p>Estado de confirmacion: ¿Deseas eliminar?</p>
-        <button
-          onClick={ () => dispatch({ type: 'DELETED' })}
-        >
+        <button onClick={onDelete}>
           Sure!
         </button>
-        <button
-          onClick={() => dispatch({ type: 'RESET' })}
-        >
+        <button onClick={onReset}>
           Nope, no me elimines
         </button>
       </Fragment>
@@ -68,48 +75,55 @@ const UseReducer = ({ name }) => {
   return (
     <Fragment>
       <p>Jugador numero X, usted ha sido eliminado</p>
-      <button
-        onClick={() => dispatch({ type: 'RESET' })}
-      >
+      <button onClick={onReset}>
         Volver al pasado...
       </button>
     </Fragment>
   )
 };
 
-const initialState = () => ({
+const initialState = {
   value: '',
   error: false,
   loading: false,
   deleted: false,
   confirmed: false,
-});
+};
+
+const actionTypes = {
+  confirm: 'CONFIRM',
+  error: 'ERROR',
+  write: 'WRITE',
+  check: 'CHECK',
+  delete: 'DELETE',
+  reset: 'RESET',
+};
 
 const reducerObject = (state, payload) => ({
-  'CONFIRM': {
+  [actionTypes.confirm]: {
     ...state,
     error: false,
     loading: false,
     confirmed: true,
   },
-  'ERROR': {
+  [actionTypes.error]: {
     ...state,
     error: true,
     loading: false,
   },
-  'WRITE': {
+  [actionTypes.write]: {
     ...state,
     value: payload
   },
-  'CHECK': {
+  [actionTypes.check]: {
     ...state,
     loading: true,
   },
-  'DELETED': {
+  [actionTypes.delete]: {
     ...state,
     deleted: true,
   },
-  'RESET': {
+  [actionTypes.reset]: {
     ...state,
     deleted: false,
     confirmed: false,
